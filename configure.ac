@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+AC_PREREQ([2.59])
 AC_INIT([attr], [2.5.1], [acl-devel@nongnu.org])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
@@ -23,6 +24,7 @@ AC_PREFIX_DEFAULT(/usr)
 AM_INIT_AUTOMAKE([-Wall foreign 1.11 dist-xz subdir-objects])
 AM_SILENT_RULES([yes])
 
+AC_CANONICAL_HOST
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_USE_SYSTEM_EXTENSIONS
@@ -35,7 +37,13 @@ AC_SYS_LARGEFILE
 AM_PROG_AR
 LT_INIT
 
-AM_GNU_GETTEXT_VERSION([0.18.2])
+# Require at least this gettext version, but will take any later version too.
+AM_GNU_GETTEXT_REQUIRE_VERSION([0.19.8])
+# XXX: We cannot remove the following macro due to backwards compatibility
+# reasons. The above macro is set unconditionally to the minimal version
+# required, and the below is set to 0.19.6, the first version introducing
+# the AM_GNU_GETTEXT_REQUIRE_VERSION macro.
+AM_GNU_GETTEXT_VERSION([0.19.6])
 AM_GNU_GETTEXT([external])
 
 AC_ARG_ENABLE([debug],
@@ -52,6 +60,11 @@ if test $# -ne 3 -o ${#1} -gt 1 -o ${#2} -gt 1 -o ${#3} -gt 2; then
 fi
 LT_REVISION=$(printf "%d%d%02d" "$1" "$2" "$3")
 AC_SUBST(LT_REVISION)
+
+AS_CASE([$host_os],
+	[linux*], [os_linux=yes],
+)
+AM_CONDITIONAL([OS_LINUX], [test "x$os_linux" = "xyes"])
 
 AC_CONFIG_COMMANDS([include/attr],
 	[dnl

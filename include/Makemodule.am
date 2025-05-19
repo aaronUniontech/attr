@@ -6,6 +6,9 @@ noinst_HEADERS += \
 	include/nls.h \
 	include/walk_tree.h
 
+pkginclude_HEADERS += \
+	include/xattr.h
+
 
 SUBST_INSTALL_HEADER = \
 	subst_install_header() { \
